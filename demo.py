@@ -60,4 +60,12 @@ for u in pages:
 #		pp.pprint(ulnk.parent)
 		print(stub_url + '/' + ulnk.parent.get('href'))
 		filename = os.path.basename(ulnk.parent.get('href'))
+		img = requests.get(stub_url + '/' + ulnk.parent.get('href'), stream=True)
 		print('FILE: ' + filename)
+		if img.status_code == 200:
+			with open(filename, 'wb') as f:
+				for chunk in img:
+					f.write(chunk)
+		else:
+			print("Got HTTP code " + str(img.status_code) + " while trying to download image.")
+
