@@ -14,9 +14,10 @@ pp = pprint.PrettyPrinter(indent=4)
 args_parse = argparse.ArgumentParser(description="Get those images!")
 args_parse.add_argument('-y', '--year', dest='search_year', type=int, help='Specify the year for which you would like to collect images.')
 args_parse.add_argument('-m', '--month', dest='search_mon', type=int, help='Specify the month for which you would like to collect images.')
+args_parse.add_argument('-d', '--dir', dest='savedir', help='Specify the directory to save the images to.  (Defaults to current directory.)')
 args = args_parse.parse_args()
 
-now = datetime.datetime.now()
+#now = datetime.datetime.now()
 
 if args.search_year:
 	if len(str(args.search_year)) == 4:
@@ -28,10 +29,7 @@ if args.search_year:
 	else:
 		print('Unrecognized year length')
 else:
-	#str_yr = str(now.year)
-	#arr_yr = list(str(now.year))
-	#pp.pprint(arr_yr)
-	args.search_year = "".join(list(str(now.year))[2:4])
+	args.search_year = "".join(list(str(datetime.datetime.now().year))[2:4])
 print('YEAR: ' + str(args.search_year))
 print('MONTH: ' + str(args.search_mon))
 
@@ -50,7 +48,6 @@ if r.status_code == 200:
 	for link in soup.find_all("a"):
 		#print("|" + link.get('href') + "|")
 		if re.search(fnp_re,link.get('href')):
-#			print(link.get('href'))
 			page_url = stub_url + '/' + link.get('href')
 			print(page_url)
 			pages.append(page_url)
@@ -61,15 +58,15 @@ for u in pages:
 	ur = requests.get(u)
 	usoup = BeautifulSoup(ur.text, "html.parser")
 	for ulnk in usoup.find_all('img'):
-#		print("TYPE: " + str(type(ulnk)))
-#		print("PARENT: " + ulnk.parent.name)
-#		pp.pprint(ulnk.parent)
 		print(stub_url + '/' + ulnk.parent.get('href'))
 		filename = os.path.basename(ulnk.parent.get('href'))
+                if not args.savedir:
+                    args.savedir = "."
+                local_path = args.savedir + "/" + filename
 		img = requests.get(stub_url + '/' + ulnk.parent.get('href'), stream=True)
-		print('FILE: ' + filename)
+		print('FILE: ' + local_path)
 		if img.status_code == 200:
-			with open(filename, 'wb') as f:
+			with open(local_path, 'wb') as f:
 				for chunk in img:
 					f.write(chunk)
 		else:
