@@ -28,7 +28,9 @@ if args.search_year:
 	else:
 		print('Unrecognized year length')
 else:
-	args.search_year = str.join(now.year.split[3:4])
+        str_yr = str(now.year)
+        arr_yr = str_yr.split()
+	args.search_year = "".join(arr_yr[3:4])
 print('YEAR: ' + str(args.search_year))
 print('MONTH: ' + str(args.search_mon))
 
