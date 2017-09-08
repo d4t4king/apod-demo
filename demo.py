@@ -28,13 +28,17 @@ if args.search_year:
 	else:
 		print('Unrecognized year length')
 else:
-        str_yr = str(now.year)
-        arr_yr = str_yr.split()
-	args.search_year = "".join(arr_yr[3:4])
+	#str_yr = str(now.year)
+	#arr_yr = list(str(now.year))
+	#pp.pprint(arr_yr)
+	args.search_year = "".join(list(str(now.year))[2:4])
 print('YEAR: ' + str(args.search_year))
 print('MONTH: ' + str(args.search_mon))
 
-fnpatt = r"ap" + str(args.search_year) + "\d?" + str(args.search_mon) + "\d\d\.html"
+if str(args.search_mon) == 'None':
+	fnpatt = r"ap" + str(args.search_year) + "\d?.*?\d\d\.html"
+else:
+	fnpatt = r"ap" + str(args.search_year) + "\d?" + str(args.search_mon) + "\d\d\.html"
 print("PATTERN: " + fnpatt)
 fnp_re = re.compile(fnpatt)
 stub_url = 'https://apod.nasa.gov/apod'
